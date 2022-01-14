@@ -2,20 +2,21 @@ import AppLayout from "@/layouts/AppLayout";
 
 const routes = [
     {
-        path: '/users',
+        path: '/shop',
         component: AppLayout,
-        name: 'users',
+        name: 'shop',
         meta: {
-            title: 'Users',
-            icon: 'user'
+            title: 'Shop',
+            icon: 'shopping'
         },
         children: [
             {
-                path: 'list',
+                path: 'products',
                 component: () => import('./List'),
-                name: 'userList',
+                name: 'products',
                 meta: {
-                    title: 'User list',
+                    title: 'Products',
+                    icon: 'unordered-list'
                 }
             },
             {
