@@ -1,22 +1,22 @@
 <template>
   <a-layout id="components-layout-demo-side" style="min-height: 100vh">
     <a-layout-sider v-model="collapsed" collapsible>
-      <div class="logo" />
+      <div class="logo"/>
       <a-menu theme="dark" :default-selected-keys="['1']" mode="inline">
         <template v-for="menu in $router.options.routes">
           <a-menu-item :key="menu.name" v-if="!menu.children">
             <router-link :to="{name: menu.name}">
-              <a-icon :type="menu.meta.icon" />
+              <a-icon :type="menu.meta.icon"/>
               <span>{{ menu.meta.title }}</span>
             </router-link>
           </a-menu-item>
           <a-sub-menu :key="menu.name" v-else>
-            <span slot="title"><a-icon :type="menu.meta.icon" /><span>{{ menu.meta.title }}</span></span>
+            <span slot="title"><a-icon :type="menu.meta.icon"/><span>{{ menu.meta.title }}</span></span>
             <template v-for="child in menu.children">
               <a-menu-item :key="child.name" v-if="!child.meta || !child.meta.hidden">
 
                 <router-link :to="{name: child.name}">
-                  <a-icon :type="child.meta.icon" />
+                  <a-icon :type="child.meta.icon"/>
                   {{ child.meta.title }}
                 </router-link>
               </a-menu-item>
@@ -36,7 +36,9 @@
               Logout
             </a-menu-item>
           </a-menu>
-          <a-button> admin@tasc.vn <a-icon type="down" /> </a-button>
+          <a-button> admin@tasc.vn
+            <a-icon type="down"/>
+          </a-button>
         </a-dropdown>
       </a-layout-header>
       <a-layout-content style="margin: 16px">
@@ -56,7 +58,8 @@ export default {
     return {
       collapsed: false,
     };
-  }
+  },
+
 };
 </script>
 

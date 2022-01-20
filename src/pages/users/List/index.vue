@@ -1,96 +1,93 @@
 <template>
-  <div>
-    <div>
-      <a-button type="primary" icon="plus">
-        Create user
-      </a-button>
-    </div>
-    <a-card>
-      <a-table :columns="columns" :data-source="data">
-        <a slot="name" slot-scope="text">{{ text }}</a>
-        <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
-        <span slot="tags" slot-scope="tags">
-      <a-tag
-          v-for="tag in tags"
-          :key="tag"
-          :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
-      >
-        {{ tag.toUpperCase() }}
-      </a-tag>
-    </span>
-        <span slot="action" slot-scope="text, record">
-      <router-link :to="{name: 'userEdit', params: {id: record.key}}">Update 一 {{ record.name }}</router-link>
-      <a-divider type="vertical" />
-      <a>Delete</a>
-      <a-divider type="vertical" />
-      <a class="ant-dropdown-link"> More actions <a-icon type="down" /> </a>
-    </span>
-      </a-table>
-    </a-card>
+  <div style="background-color: #ffffff; padding: 20px;">
+    <a-row :gutter="25">
+      <a-col :span="8" style="margin-bottom: 10px" v-for="p in products" :key="p.id">
+        <a-card hoverable style="width: 300px">
+          <img
+              slot="cover"
+              alt="example"
+              :src="p.thumbnail.split(',')[0]"
+          />
+          <div style="display: flex; justify-content: center; font-weight: 600"><span>{{ p.name }}</span></div>
+          <template slot="actions" class="ant-card-actions">
+            <p>{{
+                p.price.toLocaleString('vi', {
+                  style: 'currency',
+                  currency: 'VND'
+                })
+              }}</p>
+            <a-icon key="shopping-cart" type="shopping-cart" @click="addCart(p.id)"/>
+          </template>
+        </a-card>
+      </a-col>
+    </a-row>
+    <a-pagination style="margin-top: 15px"
+        v-model="params.page"
+        show-size-changer
+        :page-size.sync="params.pageSize"
+        :total="totalData"
+        @change="onChangePage"
+        @showSizeChange="onShowSizeChange"
+    />
   </div>
 </template>
 
-<script>
-const columns = [
-  {
-    dataIndex: 'name',
-    key: 'name',
-    slots: { title: 'customTitle' },
-    scopedSlots: { customRender: 'name' },
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Tags',
-    key: 'tags',
-    dataIndex: 'tags',
-    scopedSlots: { customRender: 'tags' },
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    scopedSlots: { customRender: 'action' },
-  },
-];
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-];
+<script>
+import ProductService from "@/service/ProductService";
+import CartService from "@/service/CartService";
 
 export default {
   data() {
     return {
-      data,
-      columns,
+      products: [],
+      totalData: undefined,
+      params: {
+        page: 1,
+        pageSize: 6
+      }
     };
+  },
+  created() {
+    this.getProducts();
+  },
+  methods: {
+    async getProducts() {
+      await ProductService.getAll(this.params).then(res => {
+        this.products = res.data.data
+        this.totalData = res.data.pagination.totalItems
+        console.log(this.totalData);
+      }).catch(res => {
+        console.log(res.response)
+      })
+    },
+
+    async addCart(id) {
+      await CartService.addToCart(id)
+          .then(res => {
+            if (res.data.status != 200) {
+              this.$message.error("add products fail")
+            } else {
+              this.$message.success(res.data.message)
+            }
+          })
+          .catch(reason => {
+            console.log(reason.response)
+          })
+
+    },
+    onShowSizeChange(current, pageSize) {
+      this.params.page = current;
+      this.params.pageSize = pageSize;
+      this.getProducts()
+    },
+    onChangePage(page) {
+      this.params.page = page;
+      this.getProducts()
+    }
+  },
+  watch: {
+
   },
 };
 </script>
