@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-const SONG_API_BASE_URL = 'http://localhost:8080/api/v1/products'
+const GET_ALL = 'http://localhost:8082/api/v1/products'
 
 class ProductService{
     getAll(params){
-        return axios.get(SONG_API_BASE_URL, {
+        return axios.get(GET_ALL, {
             params: params,
         });
     }
